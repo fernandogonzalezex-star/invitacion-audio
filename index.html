@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Reproductor Minimal</title>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Libre Baskerville', serif;
+}
+
+.player-container {
+  display: flex;
+  align-items: center;
+  background-color: #faf9f7;
+  border-radius: 50px;
+  padding: 10px 18px;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
+  max-width: 300px;
+  width: 90%;
+}
+
+.play-button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #e6d3a3;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.play-button:active {
+  transform: scale(1.05);
+}
+
+.play-button svg {
+  width: 18px;
+  height: 18px;
+  fill: #faf9f7;
+}
+
+.progress-bar {
+  height: 8px;
+  flex-grow: 1;
+  margin-left: 16px;
+  background-color: rgba(230, 211, 163, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #e6d3a3;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="audio"
+src="https://dl.dropboxusercontent.com/s/g4rvkymipt2cok7qhgnoa/Sebasti-n-Yatra-No-hay-nadie-m-s-LETRA.mp3">
+</audio>
+
+<div class="player-container">
+  <button class="play-button" id="playPauseBtn" aria-label="Reproducir">
+    <svg id="playIcon" viewBox="0 0 60 60">
+      <polygon points="22,15 22,45 45,30"/>
+    </svg>
+    <svg id="pauseIcon" viewBox="0 0 60 60" style="display:none;">
+      <rect x="20" y="15" width="7" height="30"/>
+      <rect x="33" y="15" width="7" height="30"/>
+    </svg>
+  </button>
+
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<script>
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("playPauseBtn");
+const playIcon = document.getElementById("playIcon");
+const pauseIcon = document.getElementById("pauseIcon");
+const progress = document.getElementById("progressFill");
+const progressBar = document.getElementById("progressBar");
+
+playBtn.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play();
+    playIcon.style.display = "none";
+    pauseIcon.style.display = "block";
+  } else {
+    audio.pause();
+    playIcon.style.display = "block";
+    pauseIcon.style.display = "none";
+  }
+});
+
+audio.addEventListener("timeupdate", () => {
+  if (audio.duration) {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = percent + "%";
+  }
+});
+
+progressBar.addEventListener("click", e => {
+  const width = progressBar.clientWidth;
+  const clickX = e.offsetX;
+  if (audio.duration) {
+    audio.currentTime = (clickX / width) * audio.duration;
+  }
+});
+
+audio.addEventListener("ended", () => {
+  playIcon.style.display = "block";
+  pauseIcon.style.display = "none";
+  progress.style.width = "0%";
+});
+</script>
+
+</body>
+</html>
